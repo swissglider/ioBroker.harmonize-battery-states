@@ -25,6 +25,6 @@
     "gitCommit": "yes",
     "license": "MIT License",
     "ci": "gh-actions",
-    "dependabot": "no",
+    "dependabot": "yes",
     "creatorVersion": "1.29.1"
 }
