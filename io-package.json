@@ -1,0 +1,72 @@
+{
+    "common": {
+        "name": "harmonize-battery-states",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Harmonize Battery states",
+        "titleLang": {
+            "en": "Harmonize Battery states",
+            "de": "Batteriestatus harmonisieren",
+            "ru": "Гармонизировать состояния батареи",
+            "pt": "Harmonizar estados da bateria",
+            "nl": "Harmoniseer de batterijstatus",
+            "fr": "Harmoniser les états de la batterie",
+            "it": "Armonizza gli stati della batteria",
+            "es": "Armonizar los estados de la batería",
+            "pl": "Zharmonizuj stany baterii",
+            "zh-cn": "协调电池状态"
+        },
+        "desc": {
+            "en": "Do have marmonized battery states this adapter do it for you",
+            "de": "Haben Sie marmonierte Batteriezustände, die dieser Adapter für Sie erledigt",
+            "ru": "У вас есть мармонизированные батареи, этот адаптер сделает это за вас",
+            "pt": "Este adaptador tem estados de bateria marmonizados para fazer isso por você",
+            "nl": "Heb de gemarmoniseerde batterij vermeld dat deze adapter het voor u doet",
+            "fr": "Ayez des états de batterie marmonisés que cet adaptateur le fasse pour vous",
+            "it": "Gli stati della batteria marmonizzati questo adattatore lo fanno per te",
+            "es": "Tiene baterías marmonizadas indica que este adaptador lo hace por usted",
+            "pl": "Miej stan baterii z marmonizacją, ten adapter zrobi to za Ciebie",
+            "zh-cn": "确实有电池电量过高的情况，说明此适配器为您完成"
+        },
+        "authors": ["Swissglider <npm@swissglider.com>"],
+        "keywords": ["availability", "battery", "devices", "iot", "alarm"],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "harmonize-battery-states.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/swissglider/ioBroker.harmonize-battery-states/master/admin/harmonize-battery-states.png",
+        "readme": "https://github.com/swissglider/ioBroker.harmonize-battery-states/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "alarm",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
+    },
+    "native": {
+        "option1": true,
+        "option2": "42"
+    },
+    "objects": [],
+    "instanceObjects": []
+}
