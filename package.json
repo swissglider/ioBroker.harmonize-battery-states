@@ -50,7 +50,8 @@
     "sinon-chai": "^3.5.0",
     "source-map-support": "^0.5.19",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "@alcalzone/release-script": "^1.7.0"
   },
   "main": "build/main.js",
   "scripts": {
@@ -65,7 +66,9 @@
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:ts && npm run test:package",
     "coverage": "nyc npm run test:ts",
-    "lint": "eslint --ext .ts src"
+    "lint": "eslint --ext .ts src",
+    "release": "release-script",
+    "deployToServer": "./scripts/deploy.sh"
   },
   "nyc": {
     "include": [
