@@ -1,4 +1,4 @@
-### 0.0.2-2 (2020-10-28)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -17,79 +17,74 @@
 
 Do have marmonized battery states this adapter do it for you
 
-## Developer manual
-This section is intended for the developer. It can be deleted later
+## Desciption
 
-### Getting started
+This adapter first of all creates for all baterry states found on the iobroker a new state.  
+&rightarrow; New state has Role: value.lowBatteryHarmonized (boolean)   
+&rightarrow; percentage when low can be configured in admin (default and per role)   
+    
+To achive this the following is done:
+1) collect all states with the following role
+    - value.battery (%)
+    - battery.percent (%)
+    - value.lowBatt (0/1)
+2) Scann can also be done manually on admin
+3) if the org state is no longer available, the new state will **further exists**. But the common parameter "reachable" will be false and the "last_seen" has the last state. There will be **no alarms** when reachable is false
 
-You are almost done, only a few steps left:
-1. Create a new repository on GitHub with the name `ioBroker.harmonize-battery-states`
+## Admin Parameters
+- Scan / Battery State update time in ms (milliseconds)
+- Default percentage when a battery state will be low
+- List of all the roles that was to be scanned. Default are:
+  - value.battery (%)
+  - battery.percent (%)
+  - value.lowBatt (0/1)
+- send alarm to pushover
+- send alarm to influxdb
 
-1. Push all files to the GitHub repo. The creator has already set up the local repository for you:  
-    ```bash
-    git push origin master
-    ```
+## value.lowBatteryHarmonized (object)
 
-1. Head over to [src/main.ts](src/main.ts) and start programming!
+```json
+{
+    "type": "state",
+    "common": {
+        "name": $Name from org state/channel/device,
+        "org_state_name": $org_state_name,
+        "org_channel_name": $org_state_name,
+        "org_device_name": $org_state_name,
+        "type": "boolean",
+        "role": "value.lowBatteryHarmonized",
+        "read": true,
+        "write": false,
+        "min": true,
+        "max": false,
+        "def": false,
+        "org_adapter": $name of the org adapter,
+        "org_id": $org id,
+        "org_state":{$org-state},
+        "reachable": true,
+        "last_seen": $ts,
+    },
+    "native": {
+        "send_alarm": true,
+    }
+    "_id": "harmonize-battery-states.0.battery-low-states."$($org id),
+}
+```
+&rightarrow; name and send_alarm can be configured on the admin panel.
 
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
+## Wishlist
 
-### Scripts in `package.json`
-Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
-| Script name | Description                                              |
-|-------------|----------------------------------------------------------|
-| `build`    | Re-compile the TypeScript sources.                       |
-| `watch`     | Re-compile the TypeScript sources and watch for changes. |
-| `test:ts`   | Executes the tests you defined in `*.test.ts` files.     |
-| `test:package`    | Ensures your `package.json` and `io-package.json` are valid. |
-| `test:unit`       | Tests the adapter startup with unit tests (fast, but might require module mocks to work). |
-| `test:integration`| Tests the adapter startup with an actual instance of ioBroker. |
-| `test` | Performs a minimal test run on package files and your tests. |
-| `coverage` | Generates code coverage using your test files. |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
-
-### Writing tests
-When done right, testing code is invaluable, because it gives you the 
-confidence to change your code while knowing exactly if and when 
-something breaks. A good read on the topic of test-driven development 
-is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
-Although writing tests before the code might seem strange at first, but it has very 
-clear upsides.
-
-The template provides you with basic tests for the adapter startup and package files.
-It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Since you have chosen GitHub Actions as your CI service, you can 
-enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
-
-### Test the adapter manually on a local ioBroker installation
-In order to install the adapter locally without publishing, the following steps are recommended:
-1. Create a tarball from your dev directory:  
-    ```bash
-    npm pack
-    ```
-1. Upload the resulting file to your ioBroker host
-1. Install it locally (The paths are different on Windows):
-    ```bash
-    cd /opt/iobroker
-    npm i /path/to/tarball.tgz
-    ```
-
-For later updates, the above procedure is not necessary. Just do the following:
-1. Overwrite the changed files in the adapter directory (`/opt/iobroker/node_modules/iobroker.harmonize-battery-states`)
-1. Execute `iobroker upload harmonize-battery-states` on the ioBroker host
+- Each adapter can be registered to get an alarm (the adapter must have an sendTo method with type:battery_alarm)   
+  &rightarrow; ev. can be configured on admin...
 
 ## Changelog
 
 ### 0.0.1
 * (Swissglider) initial release
+
+### 0.0.2-2
+* (Swissglider) README.md added with the functional description
+* (Swissglider) Addeed admin parameter to the io-package.json
 
 ## License
 MIT License

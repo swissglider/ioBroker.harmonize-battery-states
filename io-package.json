@@ -77,16 +77,8 @@
             "pl": "Miej stan baterii z marmonizacją, ten adapter zrobi to za Ciebie",
             "zh-cn": "确实有电池电量过高的情况，说明此适配器为您完成"
         },
-        "authors": [
-            "Swissglider <npm@swissglider.com>"
-        ],
-        "keywords": [
-            "availability",
-            "battery",
-            "devices",
-            "iot",
-            "alarm"
-        ],
+        "authors": ["Swissglider <npm@swissglider.com>"],
+        "keywords": ["availability", "battery", "devices", "iot", "alarm"],
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "main": "build/main.js",
@@ -119,7 +111,45 @@
         }
     },
     "native": {
-        "option1": true,
+        "default_not_overwritte_interval": 14400000,
+        "default_not_overwritte_alarm_to_pushover": true,
+        "default_not_overwritte_alarm_to_influx": true,
+        "default_not_overwritte_default_role_list": [
+            {
+                "role": "value.battery",
+                "type": "number",
+                "default_low_percentage": 15
+            },
+            {
+                "role": "battery.percent",
+                "type": "number",
+                "default_low_percentage": 15
+            },
+            {
+                "role": "value.lowBatt",
+                "type": "boolean"
+            }
+        ],
+        "interval": 14400000,
+        "alarm_to_pushover": true,
+        "alarm_to_influx": true,
+        "default_role_list": [
+            {
+                "role": "value.battery",
+                "type": "number",
+                "default_low_percentage": 15
+            },
+            {
+                "role": "battery.percent",
+                "type": "number",
+                "default_low_percentage": 15
+            },
+            {
+                "role": "value.lowBatt",
+                "type": "boolean"
+            }
+        ],
+
         "option2": "42"
     },
     "objects": [],
