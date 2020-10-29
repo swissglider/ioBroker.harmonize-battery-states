@@ -1,4 +1,4 @@
-### 0.0.2-3 (2020-10-29)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -82,7 +82,7 @@ To achive this the following is done:
 ### 0.0.1
 * (Swissglider) initial release
 
-### 0.0.2-2
+### 0.0.2-4
 * (Swissglider) README.md added with the functional description
 * (Swissglider) Addeed admin parameter to the io-package.json
 
