@@ -79,12 +79,15 @@ To achive this the following is done:
 
 ## Changelog
 
-### 0.0.1
-* (Swissglider) initial release
+### 0.0.2-5 (2020-10-30)
+* (Swissglider) Admin part "General" and "Role Include" Tabs finished
 
-### 0.0.2-4
+### 0.0.2-4 (2020-10-29)
 * (Swissglider) README.md added with the functional description
 * (Swissglider) Addeed admin parameter to the io-package.json
+
+### 0.0.1 (2020-10-28)
+* (Swissglider) initial release
 
 ## License
 MIT License

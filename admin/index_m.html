@@ -1,93 +1,377 @@
 <html>
+    <head>
+        <!-- Load ioBroker scripts and styles-->
+        <link rel="stylesheet" type="text/css" href="../../lib/css/fancytree/ui.fancytree.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+        <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css" />
 
-<head>
+        <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 
-    <!-- Load ioBroker scripts and styles-->
-    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
-    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+        <script type="text/javascript" src="../../js/translate.js"></script>
+        <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+        <script type="text/javascript" src="../../lib/js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
 
-    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="../../lib/js/selectID.js"></script>
+        <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 
-    <script type="text/javascript" src="../../js/translate.js"></script>
-    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
-    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+        <!-- Load our own files -->
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <script type="text/javascript" src="words.js"></script>
 
-    <!-- Load our own files -->
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <script type="text/javascript" src="words.js"></script>
-
-    <script type="text/javascript">
-        // This will be called by the admin adapter when the settings page loads
-        function load(settings, onChange) {
-            // example: select elements with id=key and class=value and insert value
-            if (!settings) return;
-            $('.value').each(function () {
-                var $key = $(this);
-                var id = $key.attr('id');
-                if ($key.attr('type') === 'checkbox') {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', settings[id])
-                        .on('change', () => onChange())
-                        ;
-                } else {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.val(settings[id])
-                        .on('change', () => onChange())
-                        .on('keyup', () => onChange())
-                        ;
+        <script type="text/javascript">
+            // This will be called by the admin adapter when the settings page loads
+            function load(settings, onChange) {
+                // example: select elements with id=key and class=value and insert value
+                if (!settings) return;
+                $('.value').each(function () {
+                    var $key = $(this);
+                    var id = $key.attr('id');
+                    if ($key.attr('type') === 'checkbox') {
+                        // do not call onChange direct, because onChange could expect some arguments
+                        $key.prop('checked', settings[id]).on('change', () => onChange());
+                    } else {
+                        // do not call onChange direct, because onChange could expect some arguments
+                        $key.val(settings[id])
+                            .on('change', () => onChange())
+                            .on('keyup', () => onChange());
+                    }
+                });
+                if (
+                    settings['default_role_list'] &&
+                    Array.isArray(settings['default_role_list']) &&
+                    settings['default_role_list'].length > 0
+                ) {
+                    settings['default_role_list'].forEach((value) => {
+                        addRoleListItem(value, onChange);
+                    });
                 }
+                onChange(false);
+
+                $('.reset-value').click((event) => {
+                    var attri = event.currentTarget.attributes['param2change'].value;
+                    var $key = $('#' + attri);
+                    if ($key.attr('type') === 'checkbox') {
+                        $key.prop('checked', settings['default_not_overwritte_' + attri]);
+                    } else {
+                        $key.val(settings['default_not_overwritte_' + attri]);
+                    }
+                    // $('#' + attri).val(settings['default_not_overwritte_' + attri]);
+                    onChange();
+                });
+
+                $('.default_role_list_changes').change((event) => {
+                    onChange();
+                });
+
+                $('.calculateMilliseconds').click(() => {
+                    var from = $('#from_time').val();
+                    var input_value = $('#calculation_input').val();
+                    if (input_value) {
+                        if (from === 'seconds') {
+                            $('#calculation_result').val(input_value * 1000);
+                        } else if (from === 'minutes') {
+                            $('#calculation_result').val(input_value * 1000 * 60);
+                        } else if (from === 'hours') {
+                            $('#calculation_result').val(input_value * 1000 * 60 * 60);
+                        } else if (from === 'days') {
+                            $('#calculation_result').val(input_value * 1000 * 60 * 60 * 24);
+                        }
+                    }
+                });
+
+                $('.open-dialog-calculate_millisecond').click(() => {
+                    var attri = event.currentTarget.attributes['param2change'].value;
+                    $('#dialog-calculate_millisecond').attr('callerID', attri);
+                    var instance = M.Modal.getInstance($('#dialog-calculate_millisecond'));
+                    instance.open();
+                });
+
+                $('#dialog-calculate_millisecond_set').click(() => {
+                    var outVal = $('#calculation_result').val();
+                    if (outVal) {
+                        $('#' + $('#dialog-calculate_millisecond').attr('callerID')).val(outVal);
+                        onChange();
+                    }
+                });
+                // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+                if (M) M.updateTextFields();
+            }
+
+            function addRoleListItem(value, onChange) {
+                var collection_class = 'default_role_list';
+                var default_low_percentage =
+                    value.type === 'boolean'
+                        ? '-'
+                        : `<input
+                                type="number"
+                                value="${value.default_low_percentage}"
+                                class="default_role_list_changes value_default_low_percentage"
+                                min="0"
+                                max="100"
+                                step="1"
+                                required
+                            />`;
+                var checkbox_active = value.activ_for_scan ? 'checked="checked"' : '';
+                var appendText = `
+                        <tr class="hoverable">
+                            <td class="value_role">${value.role}</td>
+                            <td class="value_type">${value.type}</td>
+                            <td class="">${default_low_percentage}</td>
+                            <td><input class="default_role_list_changes value_activ_for_scan" type="checkbox" ${checkbox_active} /><span></span></td>
+                        </tr>
+                    `;
+                $('tbody.' + collection_class).append(appendText);
+                onChange();
+            }
+
+            // This will be called by the admin adapter when the user presses the save button
+            function save(callback) {
+                // example: select elements with class=value and build settings object
+                var obj = {};
+                $('.value').each(function () {
+                    var $this = $(this);
+                    if ($this.attr('type') === 'checkbox') {
+                        obj[$this.attr('id')] = $this.prop('checked');
+                    } else {
+                        obj[$this.attr('id')] = $this.val();
+                    }
+                });
+                // save all roles
+                var collection_class = 'default_role_list';
+                var default_role_list = [];
+                $('tbody.' + collection_class + ' tr').each((e, i) => {
+                    var tmp_entry = {
+                        role: $(i).find('.value_role').text(),
+                        type: $(i).find('.value_type').text(),
+                        activ_for_scan: $(i).find('.value_activ_for_scan').prop('checked'),
+                    };
+                    if ($(i).find('.value_type').text() !== 'boolean') {
+                        tmp_entry['default_low_percentage'] = $(i).find('.value_default_low_percentage').val();
+                    }
+                    default_role_list.push(tmp_entry);
+                });
+                obj['default_role_list'] = default_role_list;
+                callback(obj);
+            }
+            $(document).ready(function () {
+                $('.modal').modal();
+                $('.tooltipped').tooltip();
             });
-            onChange(false);
-            // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
-            if (M) M.updateTextFields();
-        }
+        </script>
+    </head>
 
-        // This will be called by the admin adapter when the user presses the save button
-        function save(callback) {
-            // example: select elements with class=value and build settings object
-            var obj = {};
-            $('.value').each(function () {
-                var $this = $(this);
-                if ($this.attr('type') === 'checkbox') {
-                    obj[$this.attr('id')] = $this.prop('checked');
-                } else {
-                    obj[$this.attr('id')] = $this.val();
-                }
-            });
-            callback(obj);
-        }
-    </script>
+    <body>
+        <div class="m adapter-container">
+            <div class="row">
+                <div class="col s12 m4 l2">
+                    <img src="harmonize-battery-states.png" class="logo" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 deep-orange lighten-5">
+                    <ul class="tabs transparent">
+                        <li class="tab col s3">
+                            <a class="active" href="#general_tab">
+                                <span class="translate">general_tab</span>
+                            </a>
+                        </li>
+                        <li class="tab col s3">
+                            <a href="#role_include_tab">
+                                <span class="translate">role_include_tab</span>
+                            </a>
+                        </li>
+                        <li class="tab col s3">
+                            <a href="#device_configuration_tab">
+                                <span class="translate">device_configuration_tab</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- *********************************************************************** General Tab ****************************************** -->
+                <div id="general_tab" class="col s12 blue-grey lighten-5">
+                    <div class="section">
+                        <div class="row">
+                            <div class="col s10 offset-s1">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <div class="input-field col s10">
+                                                <input type="number" class="value" id="scan_interval" />
+                                                <label for="scan_interval" class="translate">scan_interval</label>
+                                            </div>
+                                            <i
+                                                class="small material-icons open-dialog-calculate_millisecond col s1 green-text text-darken-2 tooltipped"
+                                                data-position="bottom"
+                                                data-tooltip="MS calculator"
+                                                param2change="scan_interval"
+                                                >input</i
+                                            >
+                                            <i
+                                                class="small material-icons reset-value col s1 red-text text-darken-2 tooltipped"
+                                                data-position="bottom"
+                                                data-tooltip="Reset to default"
+                                                param2change="scan_interval"
+                                                >redo</i
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <div class="col s11 input-field">
+                                                <input type="checkbox" class="value" id="alarm_to_pushover" />
+                                                <label for="alarm_to_pushover" class="translate"
+                                                    >alarm_to_pushover</label
+                                                >
+                                            </div>
 
-</head>
+                                            <i
+                                                class="small material-icons reset-value col s1 red-text text-darken-2 tooltipped"
+                                                data-position="bottom"
+                                                data-tooltip="Reset to default"
+                                                param2change="alarm_to_pushover"
+                                                >redo</i
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <div class="col s11 input-field">
+                                                <input type="checkbox" class="value" id="alarm_to_influx" />
+                                                <label for="alarm_to_influx" class="translate">alarm_to_influx</label>
+                                            </div>
 
-<body>
-
-    <div class="m adapter-container">
-
-        <div class="row">
-            <div class="col s12 m4 l2">
-                <img src="harmonize-battery-states.png" class="logo">
+                                            <i
+                                                class="small material-icons reset-value col s1 red-text text-darken-2 tooltipped"
+                                                data-position="bottom"
+                                                data-tooltip="Reset to default"
+                                                param2change="alarm_to_influx"
+                                                >redo</i
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- *********************************************************************** Role Include Tab ****************************************** -->
+                <div id="role_include_tab" class="col s12 blue-grey lighten-5">
+                    <div class="section">
+                        <div class="row">
+                            <div class="col s10 offset-s1">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <!-- <ul class="collection default_role_list"></ul> -->
+                                        <table class="responsive-table highlight centered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="translate">default_role_list_role_name</th>
+                                                    <th class="translate">default_role_list_type_name</th>
+                                                    <th class="translate">default_role_list_percentage_name</th>
+                                                    <th class="translate">default_role_list_use</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="default_role_list"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- *********************************************************************** Device configuration Tab ****************************************** -->
+                <div id="device_configuration_tab" class="col s12 blue-grey lighten-5">
+                    <div class="section">
+                        <div class="row">
+                            <div class="col s10 offset-s1">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <ul class="collection scanDeviceCollection"></ul>
+                                        <div class="row">
+                                            <i
+                                                class="large material-icons green-text col offset-s2 s2"
+                                                id="addIncludeDevice"
+                                                >add_circle_outline</i
+                                            >
+                                            <i
+                                                class="large material-icons red-text col offset-s5 s2 tooltipped"
+                                                id="resetScanDeviceCollection"
+                                                data-position="bottom"
+                                                data-tooltip="Reset to default"
+                                                >redo</i
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Put your content here -->
+        <!-- *********************************************************************** Moduls Tab ****************************************** -->
+        <div class="m material-dialogs">
+            <div id="dialog-calculate_millisecond" class="modal">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select id="from_time">
+                                <option value="seconds" class="translate">Second</option>
+                                <option value="minutes" class="translate">Minute</option>
+                                <option value="hours" selected class="translate">Hour</option>
+                                <option value="days" class="translate">Days</option>
+                            </select>
+                            <label class="translate">From</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <select id="to_time">
+                                <option value="milliseconds" selected class="translate">Millisecond</option>
+                            </select>
+                            <label class="translate">To</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <input type="number" id="calculation_input" />
+                            <label for="calculation_result" class="translate">ms_calculator_input_value</label>
+                        </div>
 
-        <!-- For example columns with settings: -->
-        <div class="row">
-            <div class="col s6 input-field">
-                <input type="checkbox" class="value" id="option1" />
-                <label for="option1" class="translate">option1</label>
-            </div>
-
-            <div class="col s6 input-field">
-                <input type="text" class="value" id="option2" />
-                <label for="option2" class="translate">option2</label>
+                        <div class="col s2">
+                            <a
+                                class="btn-small calculateMilliseconds tooltipped"
+                                data-position="bottom"
+                                data-tooltip="Calculate the input value into millisecond"
+                            >
+                                <i class="material-icons">chevron_right</i>
+                            </a>
+                        </div>
+                        <div class="input-field col s5">
+                            <input type="number" id="calculation_result" />
+                            <label class="translate" for="calculation_result">in Millisecond</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a
+                        class="modal-action modal-close waves-effect waves-green btn btn-set"
+                        id="dialog-calculate_millisecond_set"
+                    >
+                        <i class="large material-icons left">check</i>
+                        <span class="translate">take the milliseconds</span>
+                    </a>
+                    <a class="modal-action modal-close waves-effect waves-green btn btn-close">
+                        <i class="large material-icons left">close</i>
+                        <span class="translate">Cancel</span>
+                    </a>
+                </div>
             </div>
         </div>
-
-    </div>
-
-</body>
-
+    </body>
 </html>

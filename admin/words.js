@@ -14,28 +14,92 @@ systemDictionary = {
         pl: 'Ustawienia adaptera dla harmonize-battery-states',
         'zh-cn': 'harmonize-battery-states的适配器设置',
     },
-    option1: {
-        en: 'option1',
-        de: 'Option 1',
-        ru: 'Опция 1',
-        pt: 'Opção 1',
-        nl: 'Optie 1',
-        fr: 'Option 1',
-        it: 'opzione 1',
-        es: 'Opción 1',
-        pl: 'opcja 1',
-        'zh-cn': '选项1',
+    alarm_to_pushover: {
+        en: 'Alarm to pushover active',
+        de: 'Soll ein Alarm an pushover gesendet werden',
     },
-    option2: {
-        en: 'option2',
-        de: 'Option 2',
-        ru: 'option2',
-        pt: 'opção 2',
-        nl: 'Optie 2',
-        fr: 'Option 2',
-        it: 'opzione 2',
-        es: 'opcion 2',
-        pl: 'Opcja 2',
-        'zh-cn': '选项2',
+    alarm_to_influx: {
+        en: 'Save all Battery states to InfluxDB',
+        de: 'Speichere alle Batteriestati in die InfluxDB',
+    },
+    general_tab: {
+        en: 'General Configurations',
+        de: 'Allgemeine Einstellungen',
+    },
+    role_include_tab: {
+        en: 'Battery scan Roles',
+        de: 'Batterie Such Rollen',
+    },
+    device_configuration_tab: {
+        en: 'Device configuration',
+        de: 'Geräte Konfiguration',
+    },
+    scan_interval: {
+        en: 'Intervall in ms to scan the battery',
+        de: 'Interval in ms um die Batterien zu scannen',
+    },
+    default_percentage: {
+        en: 'Default percentage do be low battery, can be overwitten by each role',
+        de: 'Default Prozent wenn die Baterrie schwach angezeigt wird. Dies kann von jeder role überschrieben werden',
+    },
+    'in Millisecond': {
+        en: 'in milliseconds',
+        de: 'in Milli-Sekunden',
+    },
+    ms_calculator_input_value: {
+        en: 'input value',
+        de: 'Eingangswert',
+    },
+    Millisecond: {
+        en: 'milliseconds',
+        de: 'Milli-Sekunden',
+    },
+    Second: {
+        en: 'seconds',
+        de: 'Sekunden',
+    },
+    Minute: {
+        en: 'minutes',
+        de: 'Minuten',
+    },
+    Hour: {
+        en: 'hours',
+        de: 'Stunden',
+    },
+    Days: {
+        en: 'days',
+        de: 'Tage',
+    },
+    'take the milliseconds': {
+        en: 'take the milliseconds',
+        de: 'die Milli-Sekunden übernehmen',
+    },
+    Cancel: {
+        en: 'Cancel',
+        de: 'Abbrechen',
+    },
+    From: {
+        en: 'from',
+        de: 'von',
+    },
+    To: {
+        en: 'to',
+        de: 'zu',
+    },
+    default_role_list_role_name: {
+        en: 'Role',
+        de: 'Rolle',
+    },
+    default_role_list_type_name: {
+        en: 'Type',
+        de: 'Type',
+    },
+    default_role_list_percentage_name: {
+        en: '% to low (0-100)',
+        de: '% wenn low (0-100)',
+    },
+    default_role_list_use: {
+        en: 'active',
+        de: 'aktiv',
     },
 };
