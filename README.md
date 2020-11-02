@@ -1,4 +1,4 @@
-### 0.0.2-5 (2020-10-31)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -48,29 +48,29 @@ To achive this the following is done:
     "type": "state",
     "common": {
         "name": $Name from org state/channel/device,
-        "org_state_name": $org_state_name,
-        "org_channel_name": $org_state_name,
-        "org_device_name": $org_state_name,
         "type": "boolean",
         "role": "value.lowBatteryHarmonized",
         "read": true,
         "write": false,
-        "min": true,
-        "max": false,
-        "def": false,
-        "org_adapter": $name of the org adapter,
-        "org_id": $org id,
-        "org_state":{$org-state},
-        "reachable": true,
-        "last_seen": $ts,
     },
     "native": {
-        "send_alarm": true,
-    }
+        "reachable": true,
+        "last_ts": $ts (only if not reachable),
+        "org_state_name": $org_state_name,
+        "org_channel_name": $org_state_name,
+        "org_device_name": $org_state_name,
+        "org_adapter": $name of the org adapter,
+        "org_id": $org id,
+        "org_state": $org state,
+        "org_enum_area": $org_enum_area,
+        "org_enum_floor": $org_enum_floor,
+        "org_enum_rooms": $org_enum_rooms,
+        "org_common_type": $org_common_type,
+        "org_common_role": $org_common_role,
+    },
     "_id": "harmonize-battery-states.0.battery-low-states."$($org id),
 }
 ```
-&rightarrow; name and send_alarm can be configured on the admin panel.
 
 ## Wishlist
 
@@ -79,7 +79,10 @@ To achive this the following is done:
 
 ## Changelog
 
-### 0.0.2-5 (2020-10-30)
+### 1.0.0 (2020-11-02)
+* (Swissglider) All finished first release
+  
+### 0.0.2-5 (2020-10-31)
 * (Swissglider) Admin part "General" and "Role Include" Tabs finished
 
 ### 0.0.2-4 (2020-10-29)

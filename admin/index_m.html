@@ -95,8 +95,103 @@
                         onChange();
                     }
                 });
+                $('.battery_device_sort').click(() => {
+                    var sortOrder = getUpdateSortOrder('battery_device_sort');
+                    if (sortOrder) {
+                        visualizeLastScan((a, b) => {
+                            if (a.object.common.name < b.object.common.name) {
+                                return -1;
+                            }
+                            if (a.object.common.name > b.object.common.name) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    } else {
+                        visualizeLastScan((a, b) => {
+                            if (a.object.common.name < b.object.common.name) {
+                                return 1;
+                            }
+                            if (a.object.common.name > b.object.common.name) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    }
+                });
+
+                $('.battery_device_reachable_sort').click(() => {
+                    var sortOrder = getUpdateSortOrder('battery_device_reachable_sort');
+                    if (sortOrder) {
+                        visualizeLastScan((a, b) => a.object.native.reachable - b.object.native.reachable);
+                    } else {
+                        visualizeLastScan((a, b) => b.object.native.reachable - a.object.native.reachable);
+                    }
+                });
+
+                $('.battery_device_state_sort').click(() => {
+                    var sortOrder = getUpdateSortOrder('battery_device_state_sort');
+                    if (sortOrder) {
+                        visualizeLastScan((a, b) => a.state.val - b.state.val);
+                    } else {
+                        visualizeLastScan((a, b) => b.state.val - a.state.val);
+                    }
+                });
+
+                $('.battery_device_org_state_sort').click(() => {
+                    var sortOrder = getUpdateSortOrder('battery_device_org_state_sort');
+                    if (sortOrder) {
+                        visualizeLastScan((a, b) => a.object.native.org_state.val - b.object.native.org_state.val);
+                    } else {
+                        visualizeLastScan((a, b) => b.object.native.org_state.val - a.object.native.org_state.val);
+                    }
+                });
+
+                $('.org_adapter_name_sort').click(() => {
+                    var sortOrder = getUpdateSortOrder('org_adapter_name_sort');
+                    if (sortOrder) {
+                        visualizeLastScan((a, b) => {
+                            if (a.object.native.org_adapter < b.object.native.org_adapter) {
+                                return -1;
+                            }
+                            if (a.object.native.org_adapter > b.object.native.org_adapter) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    } else {
+                        visualizeLastScan((a, b) => {
+                            if (a.object.native.org_adapter < b.object.native.org_adapter) {
+                                return 1;
+                            }
+                            if (a.object.native.org_adapter > b.object.native.org_adapter) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    }
+                });
                 // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
                 if (M) M.updateTextFields();
+            }
+
+            function getUpdateSortOrder(sortName) {
+                var sortUp = $('.' + sortName).prop('sortUp');
+                var sortOrder = true;
+                if (sortUp === null || sortUp === undefined) {
+                    sortOrder = true;
+                    $('.' + sortName).prop('sortUp', true);
+                } else if (sortUp === true) {
+                    sortOrder = false;
+                    $('.' + sortName).prop('sortUp', false);
+                } else if (sortUp === false) {
+                    sortOrder = true;
+                    $('.' + sortName).prop('sortUp', true);
+                } else {
+                    sortOrder = true;
+                    console.error(sortUp);
+                }
+                return sortOrder;
             }
 
             function addRoleListItem(value, onChange) {
@@ -105,23 +200,21 @@
                     value.type === 'boolean'
                         ? '-'
                         : `<input
-                                type="number"
-                                value="${value.default_low_percentage}"
-                                class="default_role_list_changes value_default_low_percentage"
-                                min="0"
-                                max="100"
-                                step="1"
-                                required
-                            />`;
-                var checkbox_active = value.activ_for_scan ? 'checked="checked"' : '';
+                                            type="number"
+                                            value="${value.default_low_percentage}"
+                                            class="default_role_list_changes value_default_low_percentage"
+                                            min="0"
+                                            max="100"
+                                            step="1"
+                                            required
+                                        />`;
                 var appendText = `
-                        <tr class="hoverable">
-                            <td class="value_role">${value.role}</td>
-                            <td class="value_type">${value.type}</td>
-                            <td class="">${default_low_percentage}</td>
-                            <td><input class="default_role_list_changes value_activ_for_scan" type="checkbox" ${checkbox_active} /><span></span></td>
-                        </tr>
-                    `;
+                                    <tr class="hoverable">
+                                        <td class="value_role">${value.role}</td>
+                                        <td class="value_type">${value.type}</td>
+                                        <td class="">${default_low_percentage}</td>
+                                    </tr>
+                                `;
                 $('tbody.' + collection_class).append(appendText);
                 onChange();
             }
@@ -145,7 +238,6 @@
                     var tmp_entry = {
                         role: $(i).find('.value_role').text(),
                         type: $(i).find('.value_type').text(),
-                        activ_for_scan: $(i).find('.value_activ_for_scan').prop('checked'),
                     };
                     if ($(i).find('.value_type').text() !== 'boolean') {
                         tmp_entry['default_low_percentage'] = $(i).find('.value_default_low_percentage').val();
@@ -155,9 +247,177 @@
                 obj['default_role_list'] = default_role_list;
                 callback(obj);
             }
+
+            function doScan() {
+                sendTo(null, 'doScan', {}, (message) => {
+                    tillScanIsFinished();
+                });
+            }
+
+            function isOnScan() {
+                tillScanIsFinished();
+            }
+
+            var lastGetLastScanResult = null;
+
+            function getLastScan() {
+                sendTo(null, 'getLastScan', {}, (message) => {
+                    if (message && typeof message === 'object' && 'err' in message) {
+                        if (message.err === 'on scanning') {
+                            tillScanIsFinished();
+                            getLastScan();
+                        } else if (message.err === 'nothing found') {
+                        } else {
+                            console.err(message);
+                        }
+                    } else {
+                        if (message && typeof message === 'object') {
+                            lastGetLastScanResult = message;
+                            visualizeLastScan();
+                        } else {
+                            console.err(message);
+                        }
+                    }
+                });
+            }
+
+            function visualizeLastScan(sorter) {
+                if (lastGetLastScanResult) {
+                    $('.battery_device_list_li').remove();
+                    if (sorter) {
+                        lastGetLastScanResult.sort(sorter);
+                    }
+                    lastGetLastScanResult.forEach((e) => {
+                        var appendText = `
+                            <li class="battery_device_list_li">
+                                <div class="collapsible-header hoverable">
+                                    <div class="col s3">
+                                        <span"><b>${e.object.common.name}</b></span>
+                                    </div>
+                                    <div class="col s2">
+                                        <span>${e.object.native.reachable}</span>
+                                    </div>
+                                    <div class="col s2">
+                                        <span>${e.state.val}</span>
+                                    </div>
+                                    <div class="col s2">
+                                        <span>${e.object.native.org_state.val}</span>
+                                    </div>
+                                    <div class="col s3">
+                                        <span>${e.object.native.org_adapter}</span>
+                                    </div>
+                                </div>
+                                <div class="collapsible-body">
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">_id</b></div>
+                                                <div class="col s8 offset-s1">${e.id}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">org_id</b></div>
+                                                <div class="col s8 offset-s1">${e.object.native.org_id}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">org_common_type</b></div>
+                                                <div class="col s8 offset-s1">${e.object.native.org_common_type}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">org_common_role</b></div>
+                                                <div class="col s8 offset-s1">${e.object.native.org_common_role}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">last_change</b></div>
+                                                <div class="col s8 offset-s1">${new Date(
+                                                    e.state.lc,
+                                                ).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">timestamp</b></div>
+                                                <div class="col s8 offset-s1">${new Date(
+                                                    e.state.ts,
+                                                ).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">org_device_name</b></div>
+                                                <div class="col s8 offset-s1">${e.object.native.org_device_name}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s10 offset-s1">
+                                            <div class="row">
+                                                <div class="col s3"><b class="translate">org_channel_name</b></div>
+                                                <div class="col s8 offset-s1">${e.object.native.org_channel_name}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                        $('.battery_device_list_ul').append(appendText);
+                    });
+                    $('.battery_device_list_ul').removeClass('hide');
+                }
+            }
+
+            function tillScanIsFinished() {
+                waitTill();
+
+                function waitTill() {
+                    sendTo(null, 'isOnScan', {}, (message) => {
+                        if (message === true || message === 'true') {
+                            $('.status_device_configuration_text').text('on scanning');
+                            console.info('on scanning');
+                            $('.status_device_configuration').removeClass('hide');
+                            $('.doScanBTN').addClass('disabled');
+                            $('.isOnScanBTN').addClass('disabled');
+                            $('.getLasScanBTN').addClass('disabled');
+                            setTimeout(waitTill, 500);
+                        }
+                        if (message === false || message === 'false') {
+                            $('.status_device_configuration_text').text('scanning finished');
+                            console.info('scanning finished');
+                            $('.status_device_configuration').removeClass('hide');
+                            setTimeout(() => {
+                                $('.status_device_configuration').addClass('hide');
+                                $('.doScanBTN').removeClass('disabled');
+                                $('.isOnScanBTN').removeClass('disabled');
+                                $('.getLasScanBTN').removeClass('disabled');
+                            }, 2000);
+                        }
+                    });
+                }
+            }
+
             $(document).ready(function () {
                 $('.modal').modal();
                 $('.tooltipped').tooltip();
+                $('.collapsible').collapsible();
             });
         </script>
     </head>
@@ -267,14 +527,12 @@
                             <div class="col s10 offset-s1">
                                 <div class="row">
                                     <div class="col s12">
-                                        <!-- <ul class="collection default_role_list"></ul> -->
                                         <table class="responsive-table highlight centered">
                                             <thead>
                                                 <tr>
                                                     <th class="translate">default_role_list_role_name</th>
                                                     <th class="translate">default_role_list_type_name</th>
                                                     <th class="translate">default_role_list_percentage_name</th>
-                                                    <th class="translate">default_role_list_use</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="default_role_list"></tbody>
@@ -290,25 +548,66 @@
                     <div class="section">
                         <div class="row">
                             <div class="col s10 offset-s1">
-                                <div class="row">
+                                <div class="row deep-orange darken-3 status_device_configuration hide">
                                     <div class="col s12">
-                                        <ul class="collection scanDeviceCollection"></ul>
-                                        <div class="row">
-                                            <i
-                                                class="large material-icons green-text col offset-s2 s2"
-                                                id="addIncludeDevice"
-                                                >add_circle_outline</i
-                                            >
-                                            <i
-                                                class="large material-icons red-text col offset-s5 s2 tooltipped"
-                                                id="resetScanDeviceCollection"
-                                                data-position="bottom"
-                                                data-tooltip="Reset to default"
-                                                >redo</i
-                                            >
-                                        </div>
+                                        <div class="section status_device_configuration_text white-text">Hallo</div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col s4">
+                                        <a class="waves-effect waves-light btn-small doScanBTN" onclick="doScan()">
+                                            <i class="material-icons left">message</i>
+                                            <span class="translate">doScan</span>
+                                        </a>
+                                    </div>
+                                    <div class="col s4">
+                                        <a class="waves-effect waves-light btn-small isOnScanBTN" onclick="isOnScan()">
+                                            <i class="material-icons left">message</i>
+                                            <span class="translate">isOnScan</span>
+                                        </a>
+                                    </div>
+                                    <div class="col s4">
+                                        <a
+                                            class="waves-effect waves-light btn-small getLasScanBTN"
+                                            onclick="getLastScan()"
+                                        >
+                                            <i class="material-icons left">message</i>
+                                            <span class="translate">getLastScan</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <ul class="collapsible popout battery_device_list_ul hide">
+                                    <li class="deep-orange darken-3">
+                                        <div class="deep-orange darken-3 battery_device_header">
+                                            <div class="deep-orange darken-3 white-text col s3 battery_device_sort">
+                                                <span><b class="translate">battery_device</b></span>
+                                            </div>
+                                            <div
+                                                class="deep-orange darken-3 white-text col s2 battery_device_reachable_sort"
+                                            >
+                                                <span class="translate">battery_device_reachable</span>
+                                            </div>
+                                            <div
+                                                class="deep-orange darken-3 white-text col s2 battery_device_state_sort"
+                                            >
+                                                <span class="translate">battery_device_state</span>
+                                            </div>
+                                            <div
+                                                class="deep-orange darken-3 white-text col s2 battery_device_org_state_sort"
+                                            >
+                                                <span class="translate">battery_device_org_state</span>
+                                            </div>
+                                            <div class="deep-orange darken-3 white-text col s3 org_adapter_name_sort">
+                                                <span class="translate">org_adapter_name</span>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="collapsible-body hide"></div> -->
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

@@ -31,8 +31,8 @@ systemDictionary = {
         de: 'Batterie Such Rollen',
     },
     device_configuration_tab: {
-        en: 'Device configuration',
-        de: 'Geräte Konfiguration',
+        en: 'Battery devices',
+        de: 'Batterie Geräte',
     },
     scan_interval: {
         en: 'Intervall in ms to scan the battery',
@@ -98,8 +98,56 @@ systemDictionary = {
         en: '% to low (0-100)',
         de: '% wenn low (0-100)',
     },
-    default_role_list_use: {
-        en: 'active',
-        de: 'aktiv',
+    doScan: {
+        en: 'do battery scan',
+        de: 'Scanne Batterien',
+    },
+    isOnScan: {
+        en: 'is on scan ?',
+        de: 'am scannen ?',
+    },
+    getLastScan: {
+        en: 'get last scan',
+        de: 'letzter Scan',
+    },
+    battery_device: {
+        en: 'battery devices',
+        de: 'Battery Geräte',
+    },
+    battery_device_reachable: {
+        en: 'reacheable',
+        de: 'erreichbar',
+    },
+    battery_device_state: {
+        en: 'battery low',
+        de: 'Battery schwach',
+    },
+    battery_device_org_state: {
+        en: 'battery org state',
+        de: 'Batterie org State',
+    },
+    org_id: {
+        en: 'original ID',
+        de: 'Original ID',
+    },
+    last_change: {
+        en: 'last change',
+        de: 'letzter update',
+    },
+    timestamp: {
+        en: 'timestamp',
+        de: 'Zeitstempel',
+    },
+    org_adapter_name: {
+        en: 'original adapter name',
+        de: 'Original Adapter Name',
+    },
+    org_channel_name: {
+        en: 'original channel name',
+        de: 'Original Channel Name',
+    },
+    org_device_name: {
+        en: 'original device name',
+        de: 'Original Device Name',
     },
 };
