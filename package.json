@@ -1,6 +1,6 @@
 {
   "name": "iobroker.harmonize-battery-states",
-  "version": "0.0.2-5",
+  "version": "1.0.0",
   "description": "Do have marmonized battery states this adapter do it for you",
   "author": {
     "name": "Swissglider",
