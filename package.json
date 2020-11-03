@@ -1,6 +1,6 @@
 {
   "name": "iobroker.harmonize-battery-states",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Do have marmonized battery states this adapter do it for you",
   "author": {
     "name": "Swissglider",
@@ -53,7 +53,9 @@
     "typescript": "^4.0.5",
     "@alcalzone/release-script": "^1.7.0"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "main": "build/main.js",
   "scripts": {
     "prebuild": "rimraf ./build",
