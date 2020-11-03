@@ -1,4 +1,4 @@
-### 1.0.2 (2020-11-03)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -79,6 +79,9 @@ To achive this the following is done:
 - In the Admin Device View in the extendable area add all parameter dynamicaly from object and state
 
 ## Changelog
+
+### 1.0.3 (2020-11-03)
+* (Swissglider) Add publishConfig to package.json
 
 ### 1.0.2 (2020-11-03)
 * (Swissglider) Small patch - delete test.css
