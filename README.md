@@ -1,4 +1,4 @@
-### 1.0.4 (2020-11-03)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -32,7 +32,7 @@ To achive this the following is done:
 3) if the org state is no longer available, the new state will **further exists**. But the common parameter "reachable" will be false and the "last_seen" has the last state. There will be **no alarms** when reachable is false
 
 ## Admin Parameters
-- Scan / Battery State update time in ms (milliseconds)
+- Scan / Battery State update interval time in ms (milliseconds)
 - Default percentage when a battery state will be low
 - List of all the roles that was to be scanned. Default are:
   - value.battery (%)
@@ -79,6 +79,9 @@ To achive this the following is done:
 - In the Admin Device View in the extendable area add all parameter dynamicaly from object and state
 
 ## Changelog
+
+### 1.0.4 (2020-11-03)
+* (Swissglider) Bug in type of state changed
 
 ### 1.0.4 (2020-11-03)
 * (Swissglider) Remove publishConfig to package.json

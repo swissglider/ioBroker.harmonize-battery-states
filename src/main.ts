@@ -201,10 +201,10 @@ class HarmonizeBatteryStates extends utils.Adapter {
                 // calculate the val for the state
                 let val: boolean | number;
                 val = true;
-                if (org_obj.common.type === 'boolean') {
-                    val = org_state.val === 0 || org_state.val === false ? false : true;
-                } else if (org_obj.common.type === 'number') {
-                    const default_role = this.config.default_role_list.find((e) => e.role === org_obj.common.role);
+                const default_role = this.config.default_role_list.find((e) => e.role === org_obj.common.role);
+                if (default_role && 'type' in default_role && default_role.type === 'boolean') {
+                    val = org_state.val === 0 || org_state.val === false || org_state.val === 'false' ? false : true;
+                } else if (default_role && 'type' in default_role && default_role.type === 'number') {
                     if (default_role && 'default_low_percentage' in default_role) {
                         val = default_role.default_low_percentage >= <number>org_state.val;
                     } else {
