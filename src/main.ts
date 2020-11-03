@@ -237,6 +237,9 @@ class HarmonizeBatteryStates extends utils.Adapter {
                         if ('native' in org_obj && 'org_enum_rooms' in org_obj.native) {
                             existing_ob.native.org_enum_rooms = org_obj.native.org_enum_rooms;
                         }
+                        if ('native' in org_obj && 'org_enum_home' in org_obj.native) {
+                            existing_ob.native.org_enum_home = org_obj.native.org_enum_home;
+                        }
 
                         await this.setObjectAsync(id, <ioBroker.SettableObject>existing_ob);
                         await this.setStateChangedAsync(id, val, false);

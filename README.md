@@ -1,4 +1,4 @@
-### 1.0.6 (2020-11-03)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -62,6 +62,7 @@ To achive this the following is done:
         "org_adapter": $name of the org adapter,
         "org_id": $org id,
         "org_state": $org state,
+        "org_enum_home": $org_enum_home,
         "org_enum_area": $org_enum_area,
         "org_enum_floor": $org_enum_floor,
         "org_enum_rooms": $org_enum_rooms,
@@ -79,6 +80,9 @@ To achive this the following is done:
 - In the Admin Device View in the extendable area add all parameter dynamicaly from object and state
 
 ## Changelog
+
+### 1.0.7 (2020-11-03)
+* (Swissglider) add org_enum_home
 
 ### 1.0.6 (2020-11-03)
 * (Swissglider) Bug in type of state
