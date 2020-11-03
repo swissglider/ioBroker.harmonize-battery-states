@@ -1,4 +1,4 @@
-### __WORK IN PROGRESS__
+### 1.0.5 (2020-11-03)
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
