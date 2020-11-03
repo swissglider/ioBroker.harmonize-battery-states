@@ -1,4 +1,4 @@
-### 1.0.5 (2020-11-03)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -80,8 +80,8 @@ To achive this the following is done:
 
 ## Changelog
 
-### 1.0.4 (2020-11-03)
-* (Swissglider) Bug in type of state changed
+### 1.0.6 (2020-11-03)
+* (Swissglider) Bug in type of state
 
 ### 1.0.4 (2020-11-03)
 * (Swissglider) Remove publishConfig to package.json
