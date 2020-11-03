@@ -290,6 +290,9 @@ class HarmonizeBatteryStates extends utils.Adapter {
                     if ('native' in org_obj && 'org_enum_rooms' in org_obj.native) {
                         obj_val.native.org_enum_rooms = org_obj.native.org_enum_rooms;
                     }
+                    if ('native' in org_obj && 'org_enum_home' in org_obj.native) {
+                        obj_val.native.org_enum_home = org_obj.native.org_enum_home;
+                    }
                     await this.setObjectNotExistsAsync(id, obj_val);
                     await this.setStateAsync(id, val, true);
                     this.sendToInflux(`battery_scanner_${org_obj._id}`, val);

@@ -1,4 +1,4 @@
-### 1.0.7 (2020-11-03)
+### __WORK IN PROGRESS__
 ![Logo](admin/harmonize-battery-states.png)
 # ioBroker.harmonize-battery-states
 
@@ -81,7 +81,7 @@ To achive this the following is done:
 
 ## Changelog
 
-### 1.0.7 (2020-11-03)
+### 1.0.8 (2020-11-03)
 * (Swissglider) add org_enum_home
 
 ### 1.0.6 (2020-11-03)
